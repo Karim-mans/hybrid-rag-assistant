@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#223c32">
+  <title>Hybrid RAG Assistant — Document workspace</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <button id="scrim" class="scrim" tabindex="-1" aria-label="Close source library" hidden></button>
+    <aside id="sidebar" class="sidebar" aria-label="Workspace sidebar">
+      <div class="brand"><img src="/favicon.svg" width="39" height="39" alt=""><span>Hybrid RAG Assistant</span></div>
+      <button id="mobile-close" class="round mobile-close" aria-label="Close source library"><i data-icon="close"></i></button>
+      <div class="nav-section">
+        <div class="side-label">Workspace</div>
+        <button class="nav-current" id="chat-nav" aria-current="page"><i data-icon="chat"></i>Document chat</button>
+      </div>
+      <section class="library">
+        <div class="side-heading"><h2 class="side-label">Source library</h2><span id="lib-count" class="lib-count">0</span></div>
+        <div id="sources" class="sources"></div>
+        <button id="add-source" class="add-source"><i data-icon="plus"></i>Add sources</button>
+        <input id="files" type="file" accept=".pdf,.txt,.md" multiple hidden>
+        <p class="file-types">PDF, TXT, Markdown</p>
+      </section>
+      <div class="sidebar-base">
+        <button id="guide-open" class="guide-open"><i data-icon="book"></i>Workspace guide</button>
+        <div class="session"><span class="session-monogram"><i data-icon="desktop"></i></span><div><strong>Local workspace</strong><small>Current browser tab</small></div></div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumbs"><button id="menu" class="round" aria-label="Toggle source library" aria-controls="sidebar" aria-expanded="true"><i data-icon="panel"></i></button><span class="crumb-parent">Workspace</span><span class="crumb-slash">/</span><strong>Document chat</strong></div>
+        <button id="new-chat" class="secondary"><i data-icon="compose"></i>New chat</button>
+      </header>
+      <div class="desk">
+        <div class="scroll-area" id="scroll-area">
+          <div class="content">
+            <section id="welcome" aria-labelledby="welcome-title">
+              <div class="hero">
+                <canvas id="landscape" aria-hidden="true"></canvas>
+                <div class="hero-copy"><h1 id="welcome-title">Ask your<br><em>sources.</em></h1>
+                <p>A conversation with your documents,<br class="wide-only"> grounded in the details.</p></div>
+              </div>
+              <div class="starter-heading"><span class="rule"></span><h2>Suggested questions</h2><span class="rule"></span></div>
+              <div id="starters" class="starters"></div>
+            </section>
+            <section id="thread" class="thread" aria-label="Conversation" hidden></section>
+          </div>
+        </div>
+        <div class="composer-zone">
+          <form id="composer" class="composer">
+            <label class="sr-only" for="question">Question for your sources</label>
+            <textarea rows="2" id="question" maxlength="6000" placeholder="Ask a question about your sources…"></textarea>
+            <div class="composer-bar"><div class="composer-settings">
+              <button id="source-count" type="button" class="source-count"><i data-icon="stack"></i><span>0 sources</span></button>
+              <span class="settings-line"></span>
+              <label class="mode-control"><span class="sr-only">Answer mode</span><select id="mode"><option value="agent">Agent chat</option><option value="search">Passage search</option></select><i data-icon="chevron"></i></label>
+            </div><button id="send" class="send" type="submit" aria-label="Send question"><i data-icon="send"></i></button></div>
+          </form>
+          <div class="composer-hint"><span id="mode-hint"></span><span class="keyboard-hint"><kbd>↵</kbd> to send</span></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <dialog id="dialog"><div class="dialog-top"><div class="dialog-icon"><i data-icon="book"></i></div><button class="round" id="dialog-close" aria-label="Close dialog"><i data-icon="close"></i></button></div><div id="dialog-body"></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
