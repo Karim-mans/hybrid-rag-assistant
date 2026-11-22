@@ -115,7 +115,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/config":
             return self.reply(200, {"agentAvailable": bool(os.getenv("OPENAI_API_KEY"))})
         name = path.lstrip("/") or "index.html"
-        if name not in {"index.html", "app.js", "style.css", "landscape.js", "sample.md", "favicon.svg"}:
+        if name not in {"index.html", "app.js", "style.css", "landscape.js", "favicon.svg"}:
             return self.reply(404, {"error": "Page not found."})
         file = STATIC / name
         self.send_content(200, file.read_bytes(), mimetypes.guess_type(file.name)[0] or "text/plain")

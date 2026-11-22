@@ -13,9 +13,6 @@ const icons = {
   chevron: '<path d="m6 9 6 6 6-6"/>',
   send: '<path d="m3 10 17-7-5 18-4-7-8-4Zm8 4 9-11"/>',
   file: '<path d="M5 3h9l5 5v13H5zM14 3v6h5M8 13h8m-8 4h6"/>',
-  leaf: '<path d="M4 19C4 9 9 4 21 4c0 10-4 16-13 15m-5 2L15 9"/>',
-  waves: '<path d="M2 7c4-4 6 4 10 0s6 4 10 0M2 12c4-4 6 4 10 0s6 4 10 0M2 17c4-4 6 4 10 0s6 4 10 0"/>',
-  chart: '<path d="M4 4v16h16M8 15v-4m5 4V7m5 8v-5"/>',
   list: '<path d="M8 6h12M8 12h12M8 18h12m-16-12h.1m-.1 6h.1m-.1 6h.1"/>',
   search: '<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',
 };
@@ -91,7 +88,7 @@ function sourceItem(s) {
   mark.append(icon("file"));
   const info = el("span");
   info.append(el("span","source-title",s.name.replace(/\.[^.]+$/, "")),
-    el("small","source-meta",typeName(s.name) + (s.id === "sample" ? " · Sample" : s.name.toLowerCase().endsWith(".pdf") ? " · " + s.pages.length + (s.pages.length === 1 ? " page" : " pages") : "")));
+    el("small","source-meta",typeName(s.name) + (s.name.toLowerCase().endsWith(".pdf") ? " · " + s.pages.length + (s.pages.length === 1 ? " page" : " pages") : "")));
   item.append(mark,info);
   return item;
 }
@@ -103,13 +100,15 @@ function renderSources() {
   updateControls();
 }
 function renderStarters() {
+  $("starter-title").textContent = sources.length ? "Suggested questions" : "Start with a document";
+  if (!sources.length) {
+    $("starters").replaceChildren(btn("Add your first source", "secondary", () => $("add-source").click()));
+    return;
+  }
   let choices = [];
-  const onlySample = sources.length === 1 && sources[0].id === "sample";
-  if (onlySample) {
-    choices = [["leaf","What is passive rewilding?"],["waves","How do beavers change rivers?"],["chart","How is recovery measured?"]];
-  } else if (sources.length && $("mode").value === "agent") {
+  if ($("mode").value === "agent") {
     choices = [["list","What are the main ideas?"],["search","What evidence supports the conclusions?"],["book","Which terms should I know?"]];
-  } else if (sources.length) {
+  } else {
     const text = sources.map(s => s.pages.join(" ")).join(" ").slice(0,100000);
     const common = new Set("about after again because before being could every first found might other should these their there those under where which while would".split(" "));
     const words = new Map();
@@ -131,7 +130,7 @@ function renderStarters() {
     return card;
   });
   if (!cards.length) {
-    const empty = el("p","empty-text", sources.length ? "Enter a word from your source to find matching passages." : "Add your first source to start a conversation.");
+    const empty = el("p","empty-text","Enter a word from your source to find matching passages.");
     cards.push(empty);
   }
   $("starters").replaceChildren(...cards);
@@ -379,10 +378,6 @@ async function init() {
     try { saved = JSON.parse(sessionStorage.getItem(storageKey)); } catch { /* New or unavailable storage. */ }
     if (saved && Array.isArray(saved.sources) && Array.isArray(saved.turns)) {
       sources = saved.sources; turns = saved.turns;
-    } else {
-      const response = await fetch("/sample.md");
-      if (!response.ok) throw new Error("Could not load the sample source.");
-      sources = [{id:"sample",name:"Rewilding field notes.md",pages:[await response.text()]}];
     }
     $("mode").value = agentAvailable && saved?.mode !== "search" ? "agent" : "search";
     ready = true; renderSources(); renderThread();
